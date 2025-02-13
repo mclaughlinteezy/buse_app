@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences for storing the API key
+import 'package:shared_preferences/shared_preferences.dart';
 import 'transaction_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,8 +10,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController(text: "admin");
+  final TextEditingController _passwordController = TextEditingController(text: "password");
   final String apiUrl = "http://192.168.69.206:8000/api/login/";
 
   Future<void> login() async {
@@ -25,16 +25,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (response.statusCode == 200) {
-      // Parse the response body to get the API key
+
       final data = jsonDecode(response.body);
       final apiKey = data['api_key'];
 
       if (apiKey != null) {
-        // Store the API key securely using shared preferences
+
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('api_key', apiKey);
 
-        // Navigate to the next screen after successful login
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => TransactionScreen()),
@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Background Gradient
+
           Container(
             height: MediaQuery.of(context).size.height * 0.4,
             decoration: BoxDecoration(
@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          // Login Form
+
           Align(
             alignment: Alignment.bottomCenter,
             child: SingleChildScrollView(
@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   SizedBox(height: 100),
 
-                  // Profile Placeholder
+
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.grey.shade300,
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   SizedBox(height: 20),
 
-                  // Sign In Text
+
                   Text(
                     "Sign In",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 30),
                     child: Column(
                       children: [
-                        // Username Field
+
                         TextField(
                           controller: _usernameController,
                           decoration: InputDecoration(
