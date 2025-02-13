@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'static_keys.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   @override
@@ -32,9 +33,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Future<void> addTransaction() async {
+    // Get the static access key from StaticKeys class
+    String accessKey = StaticKeys.accessKey;
+
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessKey", // Assuming you are passing the access key as a Bearer token
+      },
       body: jsonEncode({
         "amount": double.parse(amountController.text),
         "description": descriptionController.text,

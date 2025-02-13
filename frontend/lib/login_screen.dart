@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences for storing the API key
 import 'transaction_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -24,10 +25,25 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (response.statusCode == 200) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => TransactionScreen()),
-      );
+      // Parse the response body to get the API key
+      final data = jsonDecode(response.body);
+      final apiKey = data['api_key'];
+
+      if (apiKey != null) {
+        // Store the API key securely using shared preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('api_key', apiKey);
+
+        // Navigate to the next screen after successful login
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TransactionScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to get API key")),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Invalid credentials")),
@@ -98,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         SizedBox(height: 10),
 
-
+                        // Password Field
                         TextField(
                           controller: _passwordController,
                           obscureText: true,
@@ -115,7 +131,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         SizedBox(height: 10),
 
-
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
@@ -126,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         SizedBox(height: 10),
 
-
+                        // Sign In Button
                         SizedBox(
                           width: double.infinity,
                           height: 50,

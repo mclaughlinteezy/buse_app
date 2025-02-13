@@ -17,15 +17,22 @@ class _TransactionScreenState extends State<TransactionScreen> {
   bool isAscending = true;
   int sortColumnIndex = 1;
   final String apiUrl = "http://127.0.0.1:8000/api/transactions/";
+  final String apiKey = "your_static_api_key_here"; // Static API key from Django settings
 
   Future<void> fetchTransactions() async {
-    final response = await http.get(Uri.parse(apiUrl));
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Authorization': 'ApiKey $apiKey', // Add API Key in the request header
+      },
+    );
     if (response.statusCode == 200) {
       setState(() {
         transactions = jsonDecode(response.body);
       });
     }
   }
+
   Future<void> printTransactions() async {
     final pdf = pw.Document();
 
@@ -58,7 +65,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
     );
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -76,11 +82,12 @@ class _TransactionScreenState extends State<TransactionScreen> {
           return ascending ? aAmount.compareTo(bAmount) : bAmount.compareTo(aAmount);
         }
         var aValue = columnIndex == 0 ? a['client'] : a['date'];
-        var bValue = columnIndex == 0 ? b['client'] : b['date'];
+        var bValue = columnIndex == 0 ? b['client'] : a['date'];
         return ascending ? aValue.compareTo(bValue) : bValue.compareTo(aValue);
       });
     });
   }
+
   void showTransactionDetails(Map<String, dynamic> transaction) {
     showModalBottomSheet(
       context: context,
@@ -136,7 +143,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
       ),
     );
   }
-
 
   double calculateTotalAmount() {
     return transactions.fold(0.0, (sum, transaction) {
@@ -255,13 +261,13 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         DataCell(Text(transaction['description'].toString())),
                         DataCell(Text(transaction['date'].toString())),
                         DataCell(
-                              IconButton(
-                                icon: Icon(Icons.visibility),
-                                onPressed: () {
-                                  showTransactionDetails(transaction);
-                                },
-                              ),
-                            ),
+                          IconButton(
+                            icon: Icon(Icons.visibility),
+                            onPressed: () {
+                              showTransactionDetails(transaction);
+                            },
+                          ),
+                        ),
                       ]),
                     )
                         .toList(),
@@ -269,7 +275,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 ),
               ),
             ),
-
           ],
         ),
       ),
