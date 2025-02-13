@@ -1,0 +1,11 @@
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Node.js dependencies (for backend)
+backend/node_modules/
+
+# Flutter dependencies (for frontend)
+frontend/.dart_tool/
+frontend/.packages
+frontend/build/
